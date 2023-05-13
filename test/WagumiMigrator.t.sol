@@ -39,23 +39,32 @@ contract WagumiMigratorTest is Test {
 
         // Get the before balances of the origin safe address
         uint256 beforeOriginSafeAddressBalance = (migrator.ORIGIN_SAFE_ADDRESS()).balance;
+        uint256 beforeDestinationSafeAddressBalance = (migrator.DESTINATION_SAFE_ADDRESS()).balance;
 
         // Set the sender to the origin safe address
-        vm.prank(migrator.ORIGIN_SAFE_ADDRESS());
+        vm.startPrank(migrator.ORIGIN_SAFE_ADDRESS());
+
+        // Approve the migration contract to transfer the NFTs
+        IERC721(migrator.NFT_CONTRACT_ADDRESS()).setApprovalForAll(address(migrator), true);
 
         // Execute the migration
-        migrator.migrate();
+        migrator.migrate{value: beforeOriginSafeAddressBalance}();
 
         // Assert that the destination safe address has received the NFTs
         // and the contract has received the ETH
         assertEq((migrator.ORIGIN_SAFE_ADDRESS()).balance, 0);
         assertEq((address(migrator)).balance, 0);
-        assertEq((address(this)).balance, 0);
-        assertEq(((migrator.DESTINATION_SAFE_ADDRESS()).balance), beforeOriginSafeAddressBalance);
+        assertEq(
+            ((migrator.DESTINATION_SAFE_ADDRESS()).balance),
+            beforeOriginSafeAddressBalance + beforeDestinationSafeAddressBalance
+        );
 
         // Assert that the NFTs have been transferred correctly
         for (uint256 i = 0; i < 10; i++) {
             assertEq(IERC721(migrator.NFT_CONTRACT_ADDRESS()).ownerOf(i), migrator.DESTINATION_SAFE_ADDRESS());
         }
+
+        // End the prank
+        vm.stopPrank();
     }
 }

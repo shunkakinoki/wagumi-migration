@@ -12,7 +12,7 @@ contract WagumiMigrator {
     // Origin safe address
     address public constant ORIGIN_SAFE_ADDRESS = 0xDCE4694e268bD83EA41B335320Ed11A684a1d7dB;
 
-    function migrate() public {
+    function migrate() public payable {
         // Get the Wagumi Cats NFT contract
         IERC721 nftContract = IERC721(NFT_CONTRACT_ADDRESS);
 
@@ -22,6 +22,8 @@ contract WagumiMigrator {
         }
 
         // Transfer all ETH to the destination safe address
-        payable(DESTINATION_SAFE_ADDRESS).transfer(address(this).balance);
+        (bool success,) = payable(DESTINATION_SAFE_ADDRESS).call{value: msg.value}("");
+
+        require(success, "Transfer failed.");
     }
 }
