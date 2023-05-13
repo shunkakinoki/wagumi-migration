@@ -4,6 +4,11 @@ pragma solidity ^0.8.15;
 
 import {IERC721} from "./IERC721.sol";
 
+/**
+ * @title WagumiMigrator
+ * @dev Migrates Wagumi Cats NFTs and ETH from one safe address to another
+ * @author Shun Kakinoki
+ */
 contract WagumiMigrator {
     // Wagumi Cats NFT contract address
     address public constant NFT_CONTRACT_ADDRESS = 0x6144D927EE371de7e7f8221b596F3432E7A8e6D9;
