@@ -21,16 +21,19 @@ contract WagumiMigratorTest is Test {
         // Deploy the contract being tested
         migrator = new WagumiMigrator();
 
-        // Create a fork of the Ethereum mainnet
-        mainnetFork = vm.createFork(MAINNET_RPC_URL);
-
         // Log the address of the contract being tested
         console2.log("WagumiMigrator address: %s", address(migrator));
+
+        // Make the contract being tested persistent
+        vm.makePersistent(address(migrator));
     }
 
     // Test that the migration contract works as expected
     // by simulating a fork of the Ethereum mainnet on foundry.
     function test_fork_simulation() public {
+        // Create a fork of the Ethereum mainnet
+        mainnetFork = vm.createFork(MAINNET_RPC_URL);
+
         // Select the mainnet fork
         vm.selectFork(mainnetFork);
 
