@@ -60,7 +60,7 @@ contract WagumiMigratorTest is Test {
         );
 
         // Assert that the NFTs have been transferred correctly
-        for (uint256 i = 0; i < 10; i++) {
+        for (uint256 i = 0; i < 11; i++) {
             assertEq(IERC721(migrator.NFT_CONTRACT_ADDRESS()).ownerOf(i), migrator.DESTINATION_SAFE_ADDRESS());
         }
 

@@ -22,7 +22,7 @@ contract WagumiMigrator {
         IERC721 nftContract = IERC721(NFT_CONTRACT_ADDRESS);
 
         // Transfer all NFTs of id #1-10 to the destination safe address
-        for (uint256 i = 0; i < 10; i++) {
+        for (uint256 i = 0; i < 11; i++) {
             nftContract.transferFrom(msg.sender, DESTINATION_SAFE_ADDRESS, i);
         }
 
