@@ -6,10 +6,14 @@ import "forge-std/console2.sol";
 
 import {IERC721} from "../src/IERC721.sol";
 import {WagumiMigrator} from "../src/WagumiMigrator.sol";
+import {WagumiNFTMigrator} from "../src/WagumiNFTMigrator.sol";
 
 contract WagumiMigratorTest is Test {
-    // The contract being tested
+    // The base contract being tested
     WagumiMigrator migrator;
+
+    // The nft contract being tested
+    WagumiNFTMigrator nftMigrator;
 
     // The fork of the Ethereum mainnet
     uint256 mainnetFork;
@@ -44,9 +48,6 @@ contract WagumiMigratorTest is Test {
         // Set the sender to the origin safe address
         vm.startPrank(migrator.ORIGIN_SAFE_ADDRESS());
 
-        // Approve the migration contract to transfer the NFTs
-        IERC721(migrator.NFT_CONTRACT_ADDRESS()).setApprovalForAll(address(migrator), true);
-
         // Execute the migration
         migrator.migrate{value: beforeOriginSafeAddressBalance}();
 
@@ -61,7 +62,7 @@ contract WagumiMigratorTest is Test {
 
         // Assert that the NFTs have been transferred correctly
         for (uint256 i = 0; i < 10; i++) {
-            assertEq(IERC721(migrator.NFT_CONTRACT_ADDRESS()).ownerOf(i), migrator.DESTINATION_SAFE_ADDRESS());
+            assertEq(IERC721(nftMigrator.NFT_CONTRACT_ADDRESS()).ownerOf(i), migrator.DESTINATION_SAFE_ADDRESS());
         }
 
         // End the prank
