@@ -24,15 +24,31 @@ contract WagumiMigratorTest is WagumiMigratorScript, Test {
         // Select the mainnet fork
         vm.selectFork(mainnetFork);
 
+        // Deploy the migration contract being tested
+        init();
+
+        // Get the before balances of the origin safe address
+        uint256 beforeOriginSafeAddressBalance = (migrator.ORIGIN_SAFE_ADDRESS()).balance;
+        uint256 beforeDestinationSafeAddressBalance = (migrator.DESTINATION_SAFE_ADDRESS()).balance;
+
+        // Assert that the origin safe address has the expected balance
+        assertEq(beforeOriginSafeAddressBalance, 258030032601721082);
+
+        // Assert that the NFTs belong to origin safe address
+        for (uint256 i = 0; i < 11; i++) {
+            assertEq(IERC721(migrator.CATS_CONTRACT_ADDRESS()).ownerOf(i), migrator.ORIGIN_SAFE_ADDRESS());
+        }
+
+        // Assert that the ENS name belongs to origin safe address
+        assertEq(
+            IERC721(migrator.ENS_CONTRACT_ADDRESS()).ownerOf(migrator.ENS_WAGUMI_ID()), migrator.ORIGIN_SAFE_ADDRESS()
+        );
+
         // Set the sender to the origin safe address
         vm.startPrank(address(0xDCE4694e268bD83EA41B335320Ed11A684a1d7dB));
 
         // Execute the migration
         migrate();
-
-        // Get the before balances of the origin safe address
-        uint256 beforeOriginSafeAddressBalance = (migrator.ORIGIN_SAFE_ADDRESS()).balance;
-        uint256 beforeDestinationSafeAddressBalance = (migrator.DESTINATION_SAFE_ADDRESS()).balance;
 
         // Assert that the destination safe address has received the NFTs
         // and the contract has received the ETH
@@ -45,8 +61,14 @@ contract WagumiMigratorTest is WagumiMigratorScript, Test {
 
         // Assert that the NFTs have been transferred correctly
         for (uint256 i = 0; i < 11; i++) {
-            assertEq(IERC721(migrator.NFT_CONTRACT_ADDRESS()).ownerOf(i), migrator.DESTINATION_SAFE_ADDRESS());
+            assertEq(IERC721(migrator.CATS_CONTRACT_ADDRESS()).ownerOf(i), migrator.DESTINATION_SAFE_ADDRESS());
         }
+
+        // Assert that the ENS name has been transferred correctly
+        assertEq(
+            IERC721(migrator.ENS_CONTRACT_ADDRESS()).ownerOf(migrator.ENS_WAGUMI_ID()),
+            migrator.DESTINATION_SAFE_ADDRESS()
+        );
 
         // End the prank
         vm.stopPrank();

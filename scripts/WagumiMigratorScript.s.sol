@@ -13,6 +13,9 @@ contract WagumiMigratorScript is Script {
         // Start the broadcast
         vm.startBroadcast();
 
+        // Initialize the contract
+        init();
+
         // Execute the migration
         migrate();
 
@@ -20,12 +23,17 @@ contract WagumiMigratorScript is Script {
         vm.stopBroadcast();
     }
 
-    function migrate() public {
+    function init() public {
         // Deploy the contract being tested
         migrator = new WagumiMigrator();
+    }
 
-        // Approve the migration contract to transfer the NFTs
-        IERC721(migrator.NFT_CONTRACT_ADDRESS()).setApprovalForAll(address(migrator), true);
+    function migrate() public {
+        // Approve the migration contract to transfer the Wagumi Cats NFTs
+        IERC721(migrator.CATS_CONTRACT_ADDRESS()).setApprovalForAll(address(migrator), true);
+
+        // Approve the migration contract to transfer the wagumi.eth ENS NFT
+        IERC721(migrator.ENS_CONTRACT_ADDRESS()).setApprovalForAll(address(migrator), true);
 
         // Execute the migration
         migrator.migrate{value: (migrator.ORIGIN_SAFE_ADDRESS()).balance}();
