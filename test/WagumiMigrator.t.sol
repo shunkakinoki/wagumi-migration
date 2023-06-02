@@ -6,7 +6,7 @@ import "forge-std/console2.sol";
 
 import {IERC721} from "../src/IERC721.sol";
 import {WagumiMigrator} from "../src/WagumiMigrator.sol";
-import {WagumiMigratorScript} from "../scripts/WagumiMigratorScript.s.sol";
+import {WagumiMigratorScript} from "../script/WagumiMigratorScript.s.sol";
 
 contract WagumiMigratorTest is WagumiMigratorScript, Test {
     // The fork of the Ethereum mainnet
