@@ -17,7 +17,7 @@ contract WagumiMigratorScript is Script {
         init();
 
         // Execute the migration
-        migrate();
+        // migrate();
 
         // End the broadcast
         vm.stopBroadcast();
